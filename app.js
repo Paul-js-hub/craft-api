@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors"
 import bodyParser from "body-parser"
 import dotenv from "dotenv"
+import todosController from "./controllers/todos"
 
 dotenv.config()
 const app = express()
@@ -17,6 +18,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.get('/', (req, res) =>{
     res.send("Welcome to craft api")
 })
+
+app.get('/todos', todosController.getAllTodos);
+app.post('/todos', todosController.addTodo);
 
 
 app.listen(PORT, () => console.log(`App listening on port ${PORT}`))
