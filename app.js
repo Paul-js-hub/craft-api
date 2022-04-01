@@ -21,6 +21,8 @@ app.get('/', (req, res) =>{
 
 app.get('/todos', todosController.getAllTodos);
 app.post('/todos', todosController.addTodo);
+app.put('/todos/:id', todosController.updateTodo);
+app.delete('/todos/:id', todosController.deleteTodo)
 
 
 app.listen(PORT, () => console.log(`App listening on port ${PORT}`))
