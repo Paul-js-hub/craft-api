@@ -1,8 +1,8 @@
 import Joi from 'joi';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 import User from '../models/user';
 import bcrypt from 'bcryptjs';
+import { isEmpty } from 'lodash';
 
 
 
@@ -11,7 +11,7 @@ const schema = Joi.object({
     email: Joi.string().min(6).required().email(),
     password: Joi.string().min(6).required(),
 });
-exports.userRegister = async (req, res) => {
+exports.userRegister = async (req, res, next) => {
 
     //validation
     const { error } = schema.validate(req.body);
@@ -21,8 +21,10 @@ exports.userRegister = async (req, res) => {
 
     // If email exists
     const emailExists = await User.findOne({ email: req.body.email });
-    if (emailExists) res.status(400).send({message:'Email already exists'});
-
+    if (emailExists){
+        return res.status(400).send({message:'Email already exists'});
+    }
+    if (isEmpty(req.body)) return res.status(400).send('EROOR! No data is submitted.');
     //hash passwords
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(req.body.password, salt);
@@ -38,7 +40,6 @@ exports.userRegister = async (req, res) => {
         }).catch((err) => {
             res.status(500).send(err)
         })
-
 }
 
 //LOGIN
