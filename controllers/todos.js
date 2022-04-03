@@ -1,5 +1,5 @@
 import Todo from "../models/todo";
-
+import Joi from 'joi'
 exports.getAllTodos = async (req, res) => {
   try {
     const todos = await Todo.find();
@@ -12,7 +12,6 @@ exports.getAllTodos = async (req, res) => {
 exports.addTodo = (req, res) => {
   const data = {
     title: req.body.title,
-    description: req.body.description,
     completed: req.body.completed,
   };
   const todo = new Todo(data);
@@ -39,7 +38,7 @@ exports.updateTodo = async (req, res) => {
     {
       $set: {
         title: req.body.title,
-        description: req.body.description,
+        //description: req.body.description,
         completed: req.body.completed,
       },
     }
@@ -49,8 +48,13 @@ exports.updateTodo = async (req, res) => {
       .status()
       .send({ message: "The todo with that particular ID not found", todo });
   }
+  const { error } = validateTodo(req.body); // result.error
+    if (error) {
+        res.status(400).send({message: error.details[0].message});
+        return;
+    }
 
-  res.status(201).send({ message: "The todo updated successfully", todo });
+   return res.status(201).send({ message: "The todo updated successfully", todo });
 };
 
 exports.deleteTodo = async (req, res) => {
@@ -67,3 +71,10 @@ exports.deleteTodo = async (req, res) => {
       res.status(200).send({msg: "The book with that particular ID not found", message})
   }
 };
+
+function validateTodo(todo) {
+  const schema = Joi.object({
+      title: Joi.string().min(3).required()
+  });
+  return schema.validate(todo);
+}
