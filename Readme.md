@@ -19,10 +19,10 @@ For development, you are only required to have Node.js and a node global package
 If the installation was successful, you should be able to run the following commands.
 
     $ node --version
-    v12.16.3
+    v16.14.0
 
     $ npm --version
-    6.14.4
+    8.3.1
 
 # Installing
 
